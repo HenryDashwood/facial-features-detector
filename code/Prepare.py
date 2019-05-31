@@ -37,7 +37,7 @@ class Prepare():
         while (i < 22):
             df.columns.values[i] = (str(j) + "_x")
             df.columns.values[i+1] = (str(j) + "_y")
-            i += 2 
+            i += 2
             j += 1
 
         df = df.set_index('filename')
@@ -45,9 +45,9 @@ class Prepare():
         return df
 
     def resize(self, image_name, img, df):
-    
-        keypoints = KeypointsOnImage([Keypoint(x=df.loc[image_name].values[i], 
-                                               y=df.loc[image_name].values[i+1]) for i in range(0,22,2)], 
+
+        keypoints = KeypointsOnImage([Keypoint(x=df.loc[image_name].values[i],
+                                               y=df.loc[image_name].values[i+1]) for i in range(0,22,2)],
                                      shape=img.shape)
 
         seq = iaa.Sequential([
@@ -60,7 +60,7 @@ class Prepare():
         keypoints_aug = seq_det.augment_keypoints([keypoints])[0]
 
         coords = []
-        for i in range(11):  
+        for i in range(11):
             coords.append(keypoints_aug.keypoints[i].x)
             coords.append(keypoints_aug.keypoints[i].y)
 
