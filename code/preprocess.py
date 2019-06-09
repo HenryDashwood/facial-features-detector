@@ -58,6 +58,42 @@ def load(images_path, labels_path):
 
     return X, y
 
+def augment(imgs, kps):
+    seq = iaa.Sequential([
+                          iaa.Fliplr(0.5),
+                          iaa.Affine(
+                              scale=(0.5, 1),
+                              mode="symmetric"
+                          )  
+                        ])
+    
+    keypoints = [KeypointsOnImage.from_xy_array(kps[i], shape=imgs[i].shape) for i in range(kps.shape[0])]
+    imgs_aug, kps_aug = seq(images=imgs, keypoints=keypoints)
+    kps_aug = [kps_aug[i].to_xy_array().flatten() for i in range(len(kps_aug))]
+    
+    return imgs_aug, kps_aug
+
+def generator(X, y, batch_size, target_size):
+    
+    temp_X = X.copy()
+    temp_y = y.copy()
+    
+    batch_features = np.zeros((batch_size, target_size, target_size, 3))
+    batch_labels = np.zeros((batch_size, 22)) 
+    
+    while True:
+        indices = np.random.choice(temp_X.shape[0], batch_size)
+        ks = temp_y.iloc[indices].values.reshape(batch_size,11,2)
+        random_augmented_image, random_augmented_labels = augment(temp_X[indices], ks)
+
+        batch_features = random_augmented_image
+        batch_labels = random_augmented_labels
+        
+        batch_features = batch_features / 255
+        batch_labels = (pd.DataFrame(batch_labels) - (target_size/2)) / (target_size/2)
+                        
+        yield batch_features, batch_labels
+
 if __name__ == "__main__":
     X, y = load("../data/images/", "../data/landmarks.csv")
     X_train, X_test_, y_train, y_test_ = train_test_split(X, y, test_size=0.3, random_state=42)
