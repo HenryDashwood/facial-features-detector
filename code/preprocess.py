@@ -59,13 +59,16 @@ def load(images_path, labels_path):
     return X, y
 
 def augment(imgs, kps):
-    seq = iaa.Sequential([
-                          iaa.Fliplr(0.5),
-                          iaa.Affine(
-                              scale=(0.5, 1),
-                              mode="symmetric"
-                          )  
-                        ])
+    seq = iaa.SomeOf(
+        (0,4),
+        [
+            iaa.Fliplr(0.5),
+            iaa.Affine(scale=(0.5, 1), mode="symmetric"),
+            iaa.PerspectiveTransform(scale=(0.01, 0.1)),
+            iaa.Multiply((0.5, 1.5))
+        ], 
+        True
+    )
     
     keypoints = [KeypointsOnImage.from_xy_array(kps[i], shape=imgs[i].shape) for i in range(kps.shape[0])]
     imgs_aug, kps_aug = seq(images=imgs, keypoints=keypoints)
