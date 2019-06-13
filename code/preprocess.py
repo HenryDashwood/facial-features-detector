@@ -25,13 +25,13 @@ def load_coordinates_to_dataframe(labels_path):
 
     return df
 
-def resize(image_name, img, df):  
+def resize(image_name, img, df, target_size):  
     start_coords = np.array(list(df.loc[image_name])).reshape((11,2))
 
     keypoints = KeypointsOnImage.from_xy_array(start_coords, shape=img.shape)
 
     seq = iaa.Sequential([
-        iaa.Resize({"height": 80, "width": 80})
+        iaa.Resize({"height": target_size, "width": target_size})
     ])
 
     image_aug, keypoints_aug = seq(image=img, keypoints=keypoints)
@@ -42,14 +42,14 @@ def resize(image_name, img, df):
 
     return image_aug, df
 
-def load(images_path, labels_path):
+def load(images_path, labels_path, target_size):
     y = load_coordinates_to_dataframe(labels_path)
     X = []
                 
     for filename in progress_bar(list(y.index)):
         img = np.array(Image.open(images_path+filename))
         if len(img.shape) == 3 and img.shape[2] == 3:
-            img, y = resize(filename, img, y)
+            img, y = resize(filename, img, y, target_size)
             X.append(img)
         else:
             y = y.drop(filename)
