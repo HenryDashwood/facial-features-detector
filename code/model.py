@@ -2,9 +2,7 @@ from keras.models import Sequential
 from keras.layers import (Dense, SeparableConv2D, MaxPooling2D, Flatten, Dropout, BatchNormalization, 
                           GlobalAveragePooling2D)
 from keras.optimizers import Adam
-# from keras.applications import VGG16
-
-# conv_base = VGG16(weights='imagenet', include_top=False, input_shape=(80, 80, 3))
+from keras.applications import ResNet50
 
 def MyModel(target_size, max_lr):
 
@@ -31,4 +29,28 @@ def MyModel(target_size, max_lr):
 
     model.compile(loss="mean_squared_error", optimizer=Adam(lr=max_lr))
 
+    return model
+
+def Resnet50Model(target_size, max_lr):
+    
+    conv_base = ResNet50(weights='imagenet', include_top=False, input_shape=(target_size, target_size, 3))
+    conv_base.trainable = True
+
+    set_trainable = False
+    for layer in conv_base.layers:
+        if layer.name == 'block5_conv1':
+            set_trainable = True
+        if set_trainable:
+            layer.trainable = True
+        else:
+            layer.trainable = False
+
+    model = Sequential()
+    model.add(conv_base)
+    model.add(Flatten())
+    model.add(Dense(256, activation='relu'))
+    model.add(Dense(22))
+    
+    model.compile(loss="mean_squared_error", optimizer=Adam(lr=max_lr))
+    
     return model
