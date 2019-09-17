@@ -15,13 +15,14 @@ def load_coordinates_to_dataframe(labels_path):
     df['filename'] = df['filename'].str.replace('images/', '')
     df = df.set_index('filename')
     
-    df = df.drop(['box/_top', 'box/_left', 'box/_width', 'box/_height'], axis=1)
-    for col in df:
-        if (col[-4:] == 'name'):
-            df = df.drop([col], axis=1) 
-    
-    df.columns = df.columns.str.replace('box/part/', '')
-    df.columns = df.columns.str.replace('/', '')
+    if labels_path == '../data/landmarks.csv':
+        df = df.drop(['box/_top', 'box/_left', 'box/_width', 'box/_height'], axis=1)
+        for col in df:
+            if (col[-4:] == 'name'):
+                df = df.drop([col], axis=1) 
+
+        df.columns = df.columns.str.replace('box/part/', '')
+        df.columns = df.columns.str.replace('/', '')
 
     return df
 
