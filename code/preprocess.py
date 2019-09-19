@@ -10,7 +10,6 @@ from matplotlib import image
 
 def load_coordinates_to_dataframe(labels_path):
     df = pd.read_csv(labels_path)
-    
     df.columns.values[-1] = "filename"
     df['filename'] = df['filename'].str.replace('images/', '')
     df = df.set_index('filename')
@@ -50,7 +49,7 @@ def load(images_path, labels_path, target_size):
     for filename in progress_bar(list(y.index)):
         img = np.array(Image.open(images_path+filename))
         if len(img.shape) == 3 and img.shape[2] == 3:
-#             img, y = resize(filename, img, y, target_size)
+            img, y = resize(filename, img, y, target_size)
             X.append(img)
         else:
             y = y.drop(filename)
