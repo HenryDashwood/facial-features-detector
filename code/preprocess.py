@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from PIL import Image
+import PIL
 from fastprogress import progress_bar
 from imgaug import augmenters as iaa
 from imgaug.augmentables.kps import Keypoint, KeypointsOnImage
@@ -47,14 +47,19 @@ def load(images_path, labels_path, target_size):
     X = []
                 
     for filename in progress_bar(list(y.index)):
-        img = np.array(Image.open(images_path+filename))
+        img = np.array(PIL.Image.open(images_path+filename))
         if len(img.shape) == 3 and img.shape[2] == 3:
             img, y = resize(filename, img, y, target_size)
             X.append(img)
+            
+            pil_image = PIL.Image.fromarray(img.astype('uint8'), 'RGB')
+            pil_image.save('../data/resized_images/'+filename)
         else:
             y = y.drop(filename)
 
     X = np.asarray(X)
+    
+    y.to_csv('../data/resized_labels.csv')
 
     return X, y
 
