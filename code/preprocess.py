@@ -67,7 +67,7 @@ def augment(imgs, kps):
     seq = iaa.SomeOf(
         (0,4),
         [
-            iaa.Fliplr(0.5),
+#             iaa.Fliplr(0.5),
             iaa.Affine(scale=(0.5, 1), mode="symmetric"),
             iaa.PerspectiveTransform(scale=(0.01, 0.1)),
             iaa.Multiply((0.5, 1.5))
