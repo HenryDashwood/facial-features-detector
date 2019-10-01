@@ -1,0 +1,37 @@
+org: hcndashwood
+app: facial-features-detector
+service:
+  name: facial-features-detector
+
+plugins:
+  - serverless-python-requirements
+provider:
+  name: aws
+  runtime: python3.7
+  region: us-east-1
+  stage: dev
+
+  deploymentBucket:
+    name: mtpfacialfeaturesmodel
+
+  iamRoleStatements:
+    -  Effect: Allow
+       Action:
+         - s3:PutObject
+         - s3:GetObject
+       Resource:
+           - "arn:aws:s3:::mtpfacialfeaturesmodel/*"
+
+custom:
+  pythonRequirements:
+    slim: true
+
+functions:
+  regressor_lambda:
+    name: regressor_lambda
+    description: "Return facial keypoints"
+    handler: main.lambda_handler
+    events:
+      - http:
+          path: kp
+          method: POST

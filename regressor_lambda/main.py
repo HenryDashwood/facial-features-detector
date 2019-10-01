@@ -1,14 +1,24 @@
-import io
+import boto3
+from io import BytesIO
 import json
+import logging
+import from PIL import Image
 import requests
+import tarfile
+import torch
+import torch.nn.functional as F
 
-from fastai.vision import Path, ImageDataBunch, cnn_learner, models, Tensor, Flatten, open_image
-import torch.nn as nn
-from torch.nn.functional import mse_loss
-from PIL import Image
-from flask import Flask, jsonify, request
-
-app = Flask(__name__)
+def load_model(bucket, key):
+    s3 = boto3.resource("s3")
+    obj = s3.get_object(Bucket=bucket, Key=key)
+    bytestream = BytesIO(obj['Body'].read())
+    tar = tarfile.open(fileobj=bytestream, mode="r:gz")
+    for member in tar.getmembers():
+        print("Model file is :", member.name)
+        f=tar.extractfile(member)
+        print("Loading PyTorch model")
+        model = torch.jit.load(BytesIO(f.read()), map_location=torch.device('cpu')).eval()
+    return model
 
 class Reshape(nn.Module):
     def __init__(self, *args):
@@ -20,12 +30,10 @@ class Reshape(nn.Module):
 
 class MSELossFlat(nn.MSELoss):
     def forward(self, input:Tensor, target:Tensor):
-        return super().forward(input.view(-1), target.view(-1)) 
-    
-mse_loss_flat = MSELossFlat()
+        return super().forward(input.view(-1), target.view(-1))
 
 head_reg = nn.Sequential(
-    Flatten(), 
+    Flatten(),
     nn.ReLU(),
     nn.Dropout(0.5),
     nn.Linear(51200, 256),
@@ -37,37 +45,25 @@ head_reg = nn.Sequential(
     nn.Tanh()
 )
 
-def model_fn(model_file):
-    empty_data = ImageDataBunch.load_empty('../data')    
-    learn = cnn_learner(
-        empty_data, 
-        models.resnet34,
-        loss_func=mse_loss_flat,
-        custom_head=head_reg
-    )
-    learn.path = Path('..')
-    learn.load(model_file)
-    return learn
+mse_loss_flat = MSELossFlat()
 
-def input_url(url):
-    img_request = requests.get(request_body, stream=True)
-    img = open_image(io.BytesIO(img_request.content))
-    img = img.resize(320)
-    return img
-
-def input_file(img_bytes):
-    img = open_image(io.BytesIO(img_bytes))
-    img = img.resize(320)
-    return img
+def input_fn(request_body):
+    if isinstance(request_body, str):
+        request_body = json.loads(request_body)
+    img_request = requests.get(request_body['url'], stream=True)
+    img = Image.open(io.BytesIO(img_request.content))
+    img_tensor = img.resize(320).toTensor()
+    img_tensor = img_tensor.unsqueeze(0)
+    return img_tensor
 
 def predict_fn(input_object, model):
     preds = model.predict(input_object)
     return preds
 
 def preds_to_dict(tensor):
-    
+
     tensor = tensor.numpy()
-    
+
     output = {
         'leftHeadPoint_x': str(tensor[0][0]), 'leftHeadPoint_y': str(tensor[0][1]),
         'leftEarPoint_x': str(tensor[1][0]), 'leftEarPoint_y': str(tensor[1][1]),
@@ -81,22 +77,14 @@ def preds_to_dict(tensor):
         'centreMouthPoint_x': str(tensor[9][0]), 'centreMouthPoint_y': str(tensor[9][1]),
         'rightMouthPoint_x': str(tensor[10][0]), 'rightMouthPoint_y': str(tensor[10][1]),
     }
-    
-    print(output)
-    
     return output
 
-model = model_fn('fastai_resnet34')
+model = load_model(mtpfacialfeaturesmodel)
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    if request.method == 'POST':
-        file = request.files['file']
-        img_bytes = file.read()    
-        img = input_file(img_bytes)
-        preds = predict_fn(img, model)
-        output = preds_to_dict(preds[1])
-        return jsonify(output)
-
-if __name__ == '__main__':
-    app.run()
+def lambda_handler(event, context):
+    input_object = input_fn(event['body'])
+    response = predict_fn(input_object, model)
+    return {
+        "statusCode": 200,
+        "body": json.dumps(response)
+    }
