@@ -22,6 +22,12 @@ provider:
        Resource:
            - "arn:aws:s3:::mtpfacialfeaturesmodel/*"
 
+package:
+  exclude:
+    - '**/*'
+  include:
+    - 'regressor_lambda/**'
+
 custom:
   pythonRequirements:
     slim: true
