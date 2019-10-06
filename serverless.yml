@@ -26,7 +26,8 @@ package:
   exclude:
     - '**/*'
   include:
-    - 'regressor_lambda/**'
+    - '__init__.py'
+    - 'main.py'
 
 custom:
   pythonRequirements:
