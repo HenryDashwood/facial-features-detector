@@ -6,7 +6,9 @@ from PIL import Image
 import requests
 import tarfile
 import torch
+from torch import nn
 import torch.nn.functional as F
+import fastai.vision as v
 
 def load_model(bucket, key):
     s3 = boto3.resource("s3")
@@ -29,11 +31,11 @@ class Reshape(nn.Module):
         return x.view(self.shape)
 
 class MSELossFlat(nn.MSELoss):
-    def forward(self, input:Tensor, target:Tensor):
+    def forward(self, input, target):
         return super().forward(input.view(-1), target.view(-1))
 
 head_reg = nn.Sequential(
-    Flatten(),
+    v.Flatten(),
     nn.ReLU(),
     nn.Dropout(0.5),
     nn.Linear(51200, 256),
