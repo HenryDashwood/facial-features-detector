@@ -8,7 +8,7 @@ import tarfile
 import torch
 from torch import nn
 import torch.nn.functional as F
-import fastai.vision as v
+from fastai.vision import Flatten
 
 def load_model(bucket, key):
     s3 = boto3.resource("s3")
@@ -35,7 +35,7 @@ class MSELossFlat(nn.MSELoss):
         return super().forward(input.view(-1), target.view(-1))
 
 head_reg = nn.Sequential(
-    v.Flatten(),
+    Flatten(),
     nn.ReLU(),
     nn.Dropout(0.5),
     nn.Linear(51200, 256),
