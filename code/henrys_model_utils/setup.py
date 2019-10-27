@@ -1,11 +1,11 @@
 from setuptools import setup
 
 setup(
-    name='model_utils',    
+    name='henrys_model_utils',    
     version='0.1',
     author='Henry Dashwood',   
     author_email='hcndashwood@gmail.com',
-    packages=['model_utils'],
+    packages=['henrys_model_utils'],
     install_requires=[
         'torch',
         'fastai'
