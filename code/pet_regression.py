@@ -2,7 +2,9 @@ from bentoml import BentoService, api, env, artifacts
 from bentoml.artifact import FastaiModelArtifact
 from bentoml.handlers import FastaiImageHandler
 
-@env(pip_dependencies=['fastai'])
+# from fastai.vision import *
+
+@env(pip_dependencies=['pillow==6.2.2', 'fastai'])
 @artifacts([FastaiModelArtifact('pet_regressor')])
 class PetRegression(BentoService):
     
