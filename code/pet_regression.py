@@ -4,11 +4,11 @@ from bentoml.handlers import FastaiImageHandler
 
 # from fastai.vision import *
 
-@env(pip_dependencies=['pillow==6.2.2', 'fastai'])
+@env(pip_dependencies=['gevent', 'pillow==6.2.2', 'fastai'])
 @artifacts([FastaiModelArtifact('pet_regressor')])
 class PetRegression(BentoService):
     
     @api(FastaiImageHandler)
     def predict(self, image):
         result = self.artifacts.pet_regressor.predict(image)
-        return str(result)
+        return result
