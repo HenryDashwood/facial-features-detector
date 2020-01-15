@@ -9,4 +9,4 @@ class PetRegression(BentoService):
     @api(FastaiImageHandler)
     def predict(self, image):
         result = self.artifacts.pet_regressor.predict(image)
-        return [result[0], result[1].tolist(), result[2].tolist()]
+        return result[2].tolist()
