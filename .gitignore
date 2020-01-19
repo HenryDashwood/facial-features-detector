@@ -1,24 +1,16 @@
 # Ignore annoying system files
-*/.DS_store
-*/__pycache__
-__pycache__
-*/.ipynb_checkpoints
+**/.DS_store
+**/__pycache__
+**/.ipynb_checkpoints
 
-# Ignore all image files
-*.jpg
-*.JPG
-*.png
-
-# Ignore label files
-*.csv
-*.xml
-
-# Ignore saved models
-*.json
-*.h5
-*.pth
-
-# Ignore data and models folders
-data/*
-models/*
-*.pkl
+# Ignore filetypes
+**/*.jpg
+**/*.JPG
+**/*.png
+**/*.csv
+**/*.xml
+**/*.json
+**/*.h5
+**/*.pth
+**/*.pkl
+**/*.gz
