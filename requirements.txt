@@ -1,5 +1,5 @@
 bentoml
-efficientnet_pytorch
+fastai
 fastprogress
 ipykernel
 matplotlib
@@ -7,4 +7,5 @@ numpy
 pandas
 pillow
 python-dotenv
+timm
 torch
