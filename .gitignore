@@ -16,3 +16,6 @@
 **/*.pkl
 **/*.gz
 **/*.zip
+
+#Ignore Private Files
+.env

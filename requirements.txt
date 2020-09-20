@@ -1,0 +1,10 @@
+bentoml
+efficientnet_pytorch
+fastprogress
+ipykernel
+matplotlib
+numpy
+pandas
+pillow
+python-dotenv
+torch
