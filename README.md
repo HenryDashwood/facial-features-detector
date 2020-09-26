@@ -7,6 +7,18 @@
 - - Does unfreezing and more training help?
 - - Are bigger models better / slower?
 
+### Running on remote machine
+In `facial_features_detector` on local machine
+```
+zip -r Archive.zip resized_and_user_images resized_and_user_labels.csv -x ".*" -x "__MACOSX"
+scp data/Archive.zip henry@[IP_ADDRESS_OF_REMOTE_MACHINE]:/home/henry/facial-features-detector/data/
+```
+In `facial_features_detector` on the remote machine
+```
+cd data
+unzip Archive.zip
+```
+
 ### Package for Deployment
 
 ```
