@@ -5,7 +5,7 @@ from bentoml.frameworks.fastai2 import Fastai2ModelArtifact
 from utils import get_y_func
 
 
-@env(pip_dependencies=["fastai"])
+@env(pip_dependencies=["fastai", "timm"])
 @artifacts([Fastai2ModelArtifact("learner")])
 class PetRegressionService(BentoService):
     @api(input=ImageInput(), batch=False)
