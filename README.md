@@ -1,11 +1,8 @@
 # Facial Keypoints Regression Model
 
 ### TODOs
-
-- Deploy
-- Experiments
-- - Does unfreezing and more training help?
-- - Are bigger models better / slower?
+- Change path/url to test images so we can do comparisons on user data
+- Are bigger models better / slower?
 
 ### Running on remote machine
 In `facial_features_detector` on local machine
@@ -17,6 +14,19 @@ In `facial_features_detector` on the remote machine
 ```
 cd data
 unzip Archive.zip
+```
+### Training
+
+```
+python [MODEL_FILE] train \
+  --images-path data/resized_and_user_images \
+  --labels-path data/resized_and_user_labels.csv \
+  --model-type efficientnet_b3a \
+  --batch-size 64 \
+  --frozen-epochs 5 \
+  --unfrozen-epochs 0 \
+  --frozen-lr 1e-2 \ 
+  --unfrozen-lr 1e-4 \
 ```
 
 ### Package for Deployment
@@ -36,5 +46,12 @@ curl -X POST "http://localhost:5000/predict" -F image=@[PATH_TO_IMAGE]
 
 ```
 bentoml list
-bentoml sagemaker deploy [NAME_OF_ENDPOINT] -b [NAME:TAG] --api-name predict --region us-east-1 --instance-type ml.t2.medium
+bentoml sagemaker deploy [NAME_OF_ENDPOINT] -b [NAME]:[TAG] --api-name predict --region us-east-1 --instance-type ml.t2.medium
 ```
+
+## Results
+
+##### efficientnet_b3a
+| Frozen LR | Frozen LR | Frozen Epochs | Unfrozen Epochs | Val Loss |
+|:---------:|:---------:|:-------------:|:---------------:|:--------:|
+| 1e-2      | 1e-4      | 5             | 50              | 0.00802  |

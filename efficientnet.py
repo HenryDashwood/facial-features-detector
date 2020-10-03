@@ -84,34 +84,35 @@ def timm_learner(
 
 @app.command()
 def train(
-    images_path: str = "data/subset_images",
-    labels_path: str = "data/subset_labels.csv",
+    images_path: str = "data/resized_and_user_images",
+    labels_path: str = "data/resized_and_user_labels.csv",
     model_type: str = "efficientnet_b3a",
     batch_size: int = 64,
-    frozen_epochs: int = 10,
+    frozen_epochs: int = 5,
     unfrozen_epochs: int = 0,
-    frozen_lr: str = "3e-2",
-    unfrozen_lr: str = "3e-4",
+    frozen_lr: str = "1e-2",
+    unfrozen_lr: str = "1e-4",
 ):
     dls = create_dataloaders(images_path, labels_path, batch_size)
     learn = timm_learner(dls, model_type)
 
-    model_name = (
-        f"frozen_{model_type}_{batch_size}_{frozen_epochs}_{unfrozen_epochs}"
-        f"_{unfrozen_epochs}_{frozen_lr}"
-    )
+    if frozen_epochs > 0:
+        model_name = (
+            f"frozen_{model_type}_{batch_size}_{frozen_epochs}_{unfrozen_epochs}"
+            f"_{unfrozen_epochs}_{frozen_lr}"
+        )
 
-    learn.fit_flat_cos(
-        frozen_epochs,
-        float(frozen_lr),
-        wd=0.1,
-        cbs=[
-            SaveModelCallback(fname=model_name),
-            CSVLogger(fname=f"logs/{model_name}.csv"),
-        ],
-    )
+        learn.fit_flat_cos(
+            frozen_epochs,
+            float(frozen_lr),
+            wd=0.1,
+            cbs=[
+                SaveModelCallback(fname=model_name),
+                CSVLogger(fname=f"logs/{model_name}.csv"),
+            ],
+        )
 
-    learn.export(fname=f"models/{model_name}.pkl")
+        learn.export(fname=f"models/{model_name}.pkl")
 
     if unfrozen_epochs > 0:
         model_name = (
@@ -122,7 +123,7 @@ def train(
         learn.unfreeze()
 
         learn.fit_flat_cos(
-            frozen_epochs,
+            unfrozen_epochs,
             float(unfrozen_lr),
             wd=0.1,
             cbs=[
@@ -132,11 +133,6 @@ def train(
         )
 
         learn.export(fname=f"models/{model_name}.pkl")
-
-
-@app.command()
-def get_results(model_path: str):
-    pass
 
 
 @app.command()

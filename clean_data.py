@@ -51,5 +51,5 @@ if not os.path.isdir("../data/cleaned_images"):
     os.mkdir("../data/cleaned_images")
 
 for image in progress_bar(os.listdir("../data/images")):
-    if image in list(y.index):
+    if image in list(df.index):
         shutil.copyfile(f"../data/images/{image}", f"../data/cleaned_images/{image}")
