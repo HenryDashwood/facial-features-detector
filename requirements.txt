@@ -2,7 +2,6 @@ awscli
 bentoml
 black
 fastai
-fastprogress
 flake8
 imageio
 ipykernel
@@ -10,8 +9,6 @@ isort
 matplotlib
 numpy
 pandas
-pillow
 python-dotenv
 timm
-torch
 typer
