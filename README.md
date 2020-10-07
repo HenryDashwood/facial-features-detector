@@ -4,6 +4,12 @@
 - Change path/url to test images so we can do comparisons on user data
 - Are bigger models better / slower?
 
+### Setup
+```
+git clone git@github.com:WobaMedia/facial-features-detector.git
+cd facial-features-detector
+pip install -r requirements.txt
+```
 ### Running on remote machine
 In `facial_features_detector` on local machine
 ```
