@@ -7,6 +7,7 @@ git clone git@github.com:WobaMedia/facial-features-detector.git
 cd facial-features-detector
 pip install -r requirements.txt
 echo url=[MTP_API_URL] > .env
+aws configure
 ```
 
 ### View Results
