@@ -35,6 +35,9 @@ unzip Archive.zip
 ### Training
 
 ```
+aws s3 cp [PATH_TO_DATA_IN_S3] data/Archive.zip
+unzip data/Archive.zip
+
 python [MODEL_FILE] train \
   --images-path data/resized_and_user_images \
   --labels-path data/resized_and_user_labels.csv \
@@ -73,3 +76,4 @@ bentoml sagemaker deploy [NAME_OF_ENDPOINT] -b [NAME]:[TAG] --api-name predict -
 | Frozen LR | Frozen LR | Frozen Epochs | Unfrozen Epochs | Val Loss |
 | :-------: | :-------: | :-----------: | :-------------: | :------: |
 |   1e-2    |   1e-4    |       5       |       50        | 0.00802  |
+|   1e-2    |   1e-4    |       5       |       100       | 0.00599  |

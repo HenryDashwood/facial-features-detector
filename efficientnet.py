@@ -99,7 +99,7 @@ def train(
     if frozen_epochs > 0:
         model_name = (
             f"frozen_{model_type}_{batch_size}_{frozen_epochs}_{unfrozen_epochs}"
-            f"_{unfrozen_epochs}_{frozen_lr}"
+            f"_{frozen_lr}_{unfrozen_lr}"
         )
 
         learn.fit_flat_cos(
@@ -117,7 +117,7 @@ def train(
     if unfrozen_epochs > 0:
         model_name = (
             f"unfrozen_{model_type}_{batch_size}_{frozen_epochs}_{unfrozen_epochs}"
-            f"_{unfrozen_epochs}_{frozen_lr}"
+            f"_{frozen_lr}_{unfrozen_lr}"
         )
 
         learn.unfreeze()

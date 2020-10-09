@@ -9,6 +9,7 @@ isort
 matplotlib
 numpy
 pandas
+pydantic
 python-dotenv
 timm
 typer
