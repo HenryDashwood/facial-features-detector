@@ -73,7 +73,7 @@ bentoml sagemaker deploy [NAME_OF_ENDPOINT] -b [NAME]:[TAG] --api-name predict -
 
 ##### efficientnet_b3a
 
-| Frozen LR | Frozen LR | Frozen Epochs | Unfrozen Epochs | Val Loss |
-| :-------: | :-------: | :-----------: | :-------------: | :------: |
-|   1e-2    |   1e-4    |       5       |       50        | 0.00802  |
-|   1e-2    |   1e-4    |       5       |       100       | 0.00599  |
+| Frozen LR | Unfrozen LR | Frozen Epochs | Unfrozen Epochs | Val Loss |
+| :-------: | :---------: | :-----------: | :-------------: | :------: |
+|   1e-2    |   1e-4      |       5       |       50        | 0.00802  |
+|   1e-2    |   1e-4      |       5       |       100       | 0.00599  |
